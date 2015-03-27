@@ -1,4 +1,4 @@
-package customer; /**
+package GMsis.customer; /**
  * Created by Rene Birkeland on 25.02.2015.
  */
 

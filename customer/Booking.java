@@ -1,4 +1,4 @@
-package customer;
+package GMsis.customer;
 
 import javafx.beans.property.SimpleStringProperty;
 

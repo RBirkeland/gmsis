@@ -1,7 +1,6 @@
-package customer;
+package GMsis.customer;
 
-import javafx.scene.control.Alert;
-import lib.db.DBConn;
+import lib.DBConn;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -11,36 +10,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class CustomerManager {
 
     ArrayList<Customer> customers = new ArrayList<Customer>();
     private static DBConn connection = DBConn.getInstance();
-    public void doSomething() throws ClassNotFoundException{
-
-        //read();
-        //printC();
-
-        //Connection connection = DBConn.getConn();
-        printTable("Customer");
-
-        //Customer c = findCustomer(3);
-        //System.out.println(c.getLast());
-        //newCustomer("Test", "test", "adr", "adr2", "t", "t", "t");
-        printTable("Customer");
-        //deleteCustomer(4);
-        //printTable("Customer");
-        //System.out.println(existsID(4));
-
-        //myVehicles(1);
-        System.out.println("Setteled: " + isSetteled(1));
-        alert();
-
-
-        //DBConn.close();
-    }
 
     public void read() {
         try {
@@ -264,62 +239,6 @@ public class CustomerManager {
         }
         return b;
     }
-
-
-
-
-    /*public myVehicle readBooking(myVehicle v) {
-        try {
-            String query = "SELECT * FROM Bookings";
-            ResultSet rs = connection.queryDB(query);
-
-            while(rs.next()){
-               if(v.getVehicle() == rs.getInt("Vehicle ID")) {
-                   v.addBooking((rs.getInt("Booking ID")));
-               }
-            }
-        } catch(SQLException e) {
-            System.err.println(e.getMessage());
-        }
-        return v;
-    }
-
-    public ArrayList<myVehicle> readVehicle(int id) {
-        ArrayList<myVehicle> vlist = new ArrayList<myVehicle>();
-        try {
-            String query = "SELECT * FROM Vehicle";
-            ResultSet rs = connection.queryDB(query);
-
-            while(rs.next()){
-                if(id == rs.getInt("Customer ID")) {
-                    myVehicle v = new myVehicle();
-                    v.setCustomer(rs.getInt("Customer ID"));
-                    v.setVehicle(rs.getInt("Vehicle ID"));
-                    vlist.add(v);
-                }
-            }
-        } catch(SQLException e) {
-            System.err.println(e.getMessage());
-        }
-        return vlist;
-    }
-
-    public myVehicle readParts(myVehicle v) {
-        try {
-            String query = "SELECT * FROM \"Vehicle Parts\"";
-            ResultSet rs = connection.queryDB(query);
-
-            while(rs.next()){
-                if(v.getVehicle() == rs.getInt("Vehicle ID")) {
-                    v.addPart(rs.getInt("Part ID"));
-                }
-            }
-        } catch(SQLException e) {
-            System.err.println(e.getMessage());
-        }
-        return v;
-    }*/
-
 
     public int isSetteled(int id) {
         try {
