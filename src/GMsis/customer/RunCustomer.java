@@ -1,5 +1,6 @@
 package GMsis.customer;
 
+import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -7,14 +8,23 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lib.DBConn;
+import javafx.scene.control.TableView;
 import org.controlsfx.dialog.Dialogs;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,12 +33,13 @@ import java.util.logging.Logger;
  * Created by Rene on 13/02/2015.
  *
  * GUI controller class.
+ * Initialiate and runs the
  */
 public class RunCustomer implements Initializable {
     static CustomerManager c;
     private static DBConn connection;
 
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         //Gets the singelton instance to connect to the database
         connection = DBConn.getInstance();
         connection.getConn();
@@ -40,48 +51,23 @@ public class RunCustomer implements Initializable {
         //Lunches GUI
         //launch(args);
 
+        try {
+            c.doSomething();
+
+        } catch (ClassNotFoundException cnfe) {
+            System.out.println("class not found");
+        }
         connection.close();
-    }*/
+    }
 
     private Stage primaryStage;
     private TabPane rootLayout;
 
-
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Customer");
+        System.out.println("******");
         initRootLayout();
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        //Gets the singelton instance to connect to the database
-        connection = DBConn.getInstance();
-        connection.getConn();
-
-        //Creates a manager, and reads from the Customer table and stores it in customer objects.
-        c = new CustomerManager();
-        c.read();
-
-        //Check if needed to call customer
-        ArrayList<Integer> customersToCall = c.alert();
-        if(customersToCall.size() > 0) {
-            String s = "";
-            for(Integer i : customersToCall) {
-                s += "ID: "+i+"\n";
-            }
-            try {
-                popup("Customers to call about booking", s);
-            } catch (IOException ex) {
-                Logger.getLogger(RunCustomer.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        date.setCellValueFactory(new PropertyValueFactory<Booking, String>("date"));
-        customer.setCellValueFactory(new PropertyValueFactory<Booking, String>("customer"));
-        booking.setCellValueFactory(new PropertyValueFactory<Booking, String>("bookings"));
-        vehicle.setCellValueFactory(new PropertyValueFactory<Booking, String>("vehicles"));
-        parts.setCellValueFactory(new PropertyValueFactory<Booking, String>("parts"));
-        tableView.setItems(data);
     }
 
     //Loads the FXML file and shows the stage
@@ -143,12 +129,13 @@ public class RunCustomer implements Initializable {
     @FXML
     private RadioButton privateType;
 
+
     //Event listener for Submit buttom
     public void submit() throws IOException {
         //Checks if required fields are empty
         if(firstName.getText().equals("") || lastName.getText().equals("") || adr1.getText().equals("") || town.getText().equals("") || postCode.getText().equals("")) {
             popup("Error", "Please fill out all fields that are marked with *");
-        } else if(!isNumeric(phone.getText())) { //Checks if phone numbers is a number
+        } else if(!isNumeric(phone.getText())) {
             popup("Error", "Phone number has to be a number");
         } else {
             //Crreate new customer
@@ -156,10 +143,11 @@ public class RunCustomer implements Initializable {
             if(privateType.isSelected()) type = "private";
             else type = "business";
             if(!c.newCustomer(firstName.getText(), lastName.getText(), adr1.getText(), adr2.getText(), town.getText(), postCode.getText(), phone.getText(), type)) popup(null, "Customer already exists");
+            System.out.println("Added " + firstName.getText() + " " + lastName.getText());
+
         }
     }
 
-    //Checks if String is a number
     public static boolean isNumeric(String str) {
         try {
             int d = Integer.parseInt(str);
@@ -207,27 +195,88 @@ public class RunCustomer implements Initializable {
     @FXML TableColumn<Booking, String> booking;
     @FXML TableColumn<Booking, String> parts;
 
-    //Customer account table
     ObservableList<Booking> data = FXCollections.observableArrayList();
     public void table(int id) throws IOException {
         data.clear();
-        //Reads inn info, and stores it in Booking object.
         ArrayList<Booking> blist = c.readBooking();
         if(blist.size() < 1) popup("Info", "The customer does not have any registered vehicles");
         c.readCustomer(blist);
         c.readParts(blist);
         c.readDate(blist);
 
+
         for(Booking b : blist) {
-            /*System.out.println("Booking: "+b.getBookings());
+            System.out.println("Booking: "+b.getBookings());
             System.out.println("Customer: "+b.getCustomer());
             System.out.println("Vehicle: "+b.getVehicles());
             System.out.println("Parts: "+b.getParts());
-            System.out.println();*/
-
-            //Adds the desired customer to the table
-            if(b.getCustomer().equals(id+"")) data.add(b);
+            System.out.println();
+            if(b.getCustomer().equals(id+""))
+            data.add(b);
         }
+        /*if(v.size() < 1) popup(null, "The customer does not have any registered vehicles");
+        for(myVehicle mv : v) {
+            c.readParts(mv);
+            c.readBooking(mv);
+        }
+
+        Account a;
+        for(myVehicle mv : v) {
+           a = new Account();
+            a.setCustomer(mv.getCustomer()+"");
+            a.setVehicles(mv.getVehicle()+"");
+            System.out.println("Customer: " + mv.getCustomer());
+
+            String s = "";
+            String s2 = "";
+
+            for(Integer i : mv.getParts()) {
+                s2 += i+", ";
+            }
+            System.out.println("Parts: "+s2);
+            a.setParts(s2);
+
+            for(Integer i : mv.getBookings()) {
+                s += i+", ";
+            }
+            System.out.println("Booking: " +s);
+            a.setBookings(s);
+
+            data.add(a);
+        }*/
+
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        //Gets the singelton instance to connect to the database
+        connection = DBConn.getInstance();
+        connection.getConn();
+
+        //Creates a manager, and reads from the Customer table and stores it in customer objects.
+        c = new CustomerManager();
+        c.read();
+        
+        //Check if needed to call customer
+            ArrayList<Integer> customersToCall = c.alert();
+            if(customersToCall.size() > 0) {
+                String s = "";
+                for(Integer i : customersToCall) {
+                    s += "ID: "+i+"\n";
+                }
+            try {
+                popup("Customers to call about booking", s);
+            } catch (IOException ex) {
+                Logger.getLogger(RunCustomer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            }
+        date.setCellValueFactory(new PropertyValueFactory<Booking, String>("date"));
+        customer.setCellValueFactory(new PropertyValueFactory<Booking, String>("customer"));
+        booking.setCellValueFactory(new PropertyValueFactory<Booking, String>("bookings"));
+        vehicle.setCellValueFactory(new PropertyValueFactory<Booking, String>("vehicles"));
+        parts.setCellValueFactory(new PropertyValueFactory<Booking, String>("parts"));
+        tableView.setItems(data);
+        
     }
     
     //Submit button event listener
@@ -241,6 +290,7 @@ public class RunCustomer implements Initializable {
             else {
                 table(c.findCustomerName(first, last).getId());
             }
+
         }
     }
 
