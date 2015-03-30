@@ -86,8 +86,7 @@ public class OrderFormController extends Form{
         Integer ID = Integer.valueOf(idField.getText());
         Integer partID = Integer.valueOf(partIDField.getText());
         Integer quantity = Integer.valueOf(quantityField.getText());
-        System.out.println(quantity);
-
+        
         Date date;
 
         try {
@@ -101,6 +100,7 @@ public class OrderFormController extends Form{
             mainController.getPartsGarage().supplierManager.orderPart(ID, partID, date, quantity);
         else
             alert(String.format("Part with ID %d does not exist", partID));
+        mainController.updateTableLists();
     }
 
     private boolean partExists(Integer id) {
