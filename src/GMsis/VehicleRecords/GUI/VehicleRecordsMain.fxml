@@ -194,7 +194,9 @@
                                       <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                              <children>
-                                                <TableView fx:id="bookingsTable" layoutX="43.0" layoutY="40.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                                                <TableView fx:id="bookingsTable" layoutX="43.0" layoutY="37.0" prefHeight="313.0" prefWidth="428.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="37.0" />
+                                                <ChoiceBox fx:id="cmbBookings" layoutX="10.0" layoutY="7.0" prefHeight="25.0" prefWidth="175.0" />
+                                                <TableView fx:id="sbookingsTable" layoutX="9.0" layoutY="37.0" prefHeight="313.0" prefWidth="430.0" visible="false" />
                                              </children>
                                           </AnchorPane>
                                       </content>

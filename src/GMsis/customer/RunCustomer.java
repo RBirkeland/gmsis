@@ -143,7 +143,7 @@ public class RunCustomer implements Initializable {
             if(privateType.isSelected()) type = "private";
             else type = "business";
             if(!c.newCustomer(firstName.getText(), lastName.getText(), adr1.getText(), adr2.getText(), town.getText(), postCode.getText(), phone.getText(), type)) popup(null, "Customer already exists");
-            System.out.println("Added " + firstName.getText() + " " + lastName.getText());
+            else popup("Success", "Customer added");
 
         }
     }
@@ -300,7 +300,7 @@ public class RunCustomer implements Initializable {
             popup("Error", "Enter a name");
         } else {
             Customer cus = c.findCustomerName(accountFirstName.getText(), accountLastName.getText());
-            System.out.println(c.isSetteled(cus.getId()));
+            if(cus == null) popup("Error", "Customer does not exists");
             int isSetteled = c.isSetteled(cus.getId());
             if(isSetteled == 1) {
                 popup("Info", "The account is already settled");
