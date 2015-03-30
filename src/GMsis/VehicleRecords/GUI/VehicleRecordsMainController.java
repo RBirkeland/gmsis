@@ -6,6 +6,7 @@
 package GMsis.VehicleRecords.GUI;
 
 import GMsis.GMsis;
+import GMsis.parts.DateUtils;
 import GMsis.VehicleRecords.VehicleRecords;
 import VehicleRecords.Model.Vehicle;
 import java.net.URL;
@@ -21,17 +22,21 @@ import java.util.logging.Logger;
 import javafx.beans.property.FloatProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.util.Callback;
 import lib.DBConn;
 import lib.UpdateTableView;
 import org.controlsfx.control.action.Action;
@@ -51,8 +56,9 @@ public class VehicleRecordsMainController implements Initializable {
     @FXML private TextField txtSearch;
     @FXML private Button btnSearch;
     @FXML private TableView<?> vehicleTable;
-    @FXML private TableView<?> partsTable;
+    @FXML private TableView partsTable;
     @FXML private TableView<?> bookingsTable;
+    @FXML private TableView<?> sbookingsTable;
     @FXML private Tab tabVehicle;
     @FXML private Tab tabCustomer;
     @FXML private Tab tabWarranty;
@@ -87,6 +93,7 @@ public class VehicleRecordsMainController implements Initializable {
     @FXML private Label lblCustTown;
     @FXML private Label lblCustPostcode;
     @FXML private Label lblCustPhoneNum;
+    @FXML private ChoiceBox cmbBookings;
     
     private Vehicle currentVehicle;
     private VehicleRecords vehicleRecords;
@@ -333,9 +340,55 @@ public class VehicleRecordsMainController implements Initializable {
         }
         
         //Load parts
-        String partsQuery = "SELECT b.'Name', c.'Date of Booking' AS 'Date Installed', a.'Warranty Expirate Date' FROM 'Vehicle Parts' a, 'Parts' b, 'Bookings' c WHERE a.'Vehicle ID'="
+        String partsQuery = "SELECT b.'Name', b.'Description' c.'Date of Booking' AS 'Date Installed', a.'Warranty Expirate Date' FROM 'Vehicle Parts' a, 'Parts' b, 'Bookings' c WHERE a.'Vehicle ID'="
                 + lblVehID.getText() +" AND a.'Part ID'=b.'Part ID' AND a.'Booking ID'=c.'BookingID';";
         
+        ResultSet partsrs = db.queryDB(partsQuery);
+        
+        if(partsrs.next()) {
+            tabParts.setDisable(false);
+            
+            for(int i = 0; i < partsrs.getMetaData().getColumnCount(); i++) {
+                final int j = i;
+                
+                TableColumn col = new TableColumn(partsrs.getMetaData().getColumnName(i + 1));
+                
+                col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList,String>,ObservableValue<String>>(){                   
+                    @Override
+                    public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {                                                                                             
+                        return new SimpleStringProperty(param.getValue().get(j).toString());                       
+                    }                   
+                });
+
+                partsTable.getColumns().addAll(col);
+            }
+            
+            ObservableList<ObservableList> data = FXCollections.observableArrayList();
+            
+            //Add data to observable list
+            while(partsrs.next()) {
+                //Iterate rows
+                ObservableList<String> row = FXCollections.observableArrayList();
+                
+                for(int i = 1; i <= partsrs.getMetaData().getColumnCount(); i++) {
+                    if(i == 4) {
+                        Long date = partsrs.getLong(i);
+                        date = DateUtils.sec2milli(date);
+                        Date d = DateUtils.str2date(date.toString());
+                        row.add(DateUtils.date2str(d));
+                    } else {
+                        row.add(partsrs.getString(i).trim());
+                    }  
+                }
+                
+                data.add(row);
+            }
+            
+            //Add data to table
+            partsTable.setItems(data);
+        } else {
+            tabParts.setDisable(true);
+        }
         //Load bookings
         
     }
