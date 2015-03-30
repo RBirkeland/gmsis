@@ -6,9 +6,12 @@
 package GMsis;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ResourceBundle;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -20,15 +23,20 @@ import org.controlsfx.dialog.Dialogs;
  */
 
 
-public class LoginController {
+public class LoginController implements Initializable{
  @FXML private TextField username;
  @FXML private PasswordField password;
  @FXML private Button login;
  
+ private GMsis mainApp;
+ private boolean logged;
+ 
   private static DBConn connection;
- public LoginController() {
+ public void initialize(URL u, ResourceBundle rbj) {
      connection = DBConn.getInstance();
      connection.getConn();
+     
+     login.setOnAction((event) -> login());
  }
  
  private void login() {
@@ -36,7 +44,7 @@ public class LoginController {
      String u = username.getText();
      String p = password.getText();
      if(u.equals("") || p.equals("")) {
-         //TODO ERROR
+         showError("Username or Password is empty");
      } else {
          String query = "SELECT * FROM Login";
          ResultSet rs = connection.queryDB(query);
@@ -44,13 +52,29 @@ public class LoginController {
          while(rs.next()) {
              if(u.equals(rs.getString("Username")) && p.equals(rs.getString("Password"))) {
                  //TODO LOGIN
+                 logged = true;
+                 mainApp.initRootLayout();
+                 mainApp.showBookings();
              }
          }
-         
-         //TODO ERROR
+         if (!logged)
+            showError("Username or Password is incorrect");
      }
     } catch(SQLException e) {
             System.err.println(e.getMessage());
         }
 }
+ 
+ public void setGMsis(GMsis gm) {
+     mainApp = gm;
+ }
+ 
+ 
+ private void showError(String msg) {
+     Dialogs.create()
+             .title("Notification")
+             .masthead("Login Error")
+             .message(msg)
+             .showWarning();
+            }
 }

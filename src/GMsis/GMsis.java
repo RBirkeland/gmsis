@@ -71,9 +71,7 @@ public class GMsis extends Application {
             Logger.getLogger(VehicleRecordsMainController.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        initRootLayout();
         showlogin();
-        showBookings();
         
         //custRecords.setOnAction(event -> showCustomerRecords());
     }
@@ -82,8 +80,10 @@ public class GMsis extends Application {
         try {
              FXMLLoader loader = new FXMLLoader();
             loader.setLocation(GMsis.class.getResource("login.fxml"));
-            Pane rootLayout = (Pane) loader.load();
-
+             Pane rootLayout = (Pane) loader.load();
+            LoginController ctrl = loader.getController();
+            ctrl.setGMsis(this);
+           
             // Show the scene containing the root layout.
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
