@@ -47,16 +47,11 @@ public class RunCustomer implements Initializable {
         //Creates a manager, and reads from the Customer table and stores it in customer objects.
         c = new CustomerManager();
         c.read();
-
+        
         //Lunches GUI
         //launch(args);
-
-        try {
-            c.doSomething();
-
-        } catch (ClassNotFoundException cnfe) {
-            System.out.println("class not found");
-        }
+        
+        
         connection.close();
     }
 
@@ -68,6 +63,8 @@ public class RunCustomer implements Initializable {
         this.primaryStage.setTitle("Customer");
         System.out.println("******");
         initRootLayout();
+        
+        
     }
 
     //Loads the FXML file and shows the stage
@@ -77,7 +74,8 @@ public class RunCustomer implements Initializable {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(CustomerManager.class.getResource("gui.fxml"));
             rootLayout = (TabPane) loader.load();
-
+            
+            
             // Show the scene containing the root layout.
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
@@ -92,6 +90,8 @@ public class RunCustomer implements Initializable {
                 }
                 popup("Customers to call about booking", s);
             }
+            
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -128,10 +128,22 @@ public class RunCustomer implements Initializable {
     private RadioButton businessType;
     @FXML
     private RadioButton privateType;
+    
+    @FXML private TableView customerTable;
+    @FXML private TableColumn<TableCustomer, String> firstNameCol;
+    @FXML private TableColumn<TableCustomer, String> lastNameCol;
+    @FXML private TableColumn<TableCustomer, String> IDCOL;
+    ObservableList<TableCustomer> customerData = FXCollections.observableArrayList();
 
 
     //Event listener for Submit buttom
     public void submit() throws IOException {
+        for(Customer cus : c.customers) {
+            TableCustomer tc = new TableCustomer(""+cus.getId(), ""+cus.getFirst(),""+cus.getLast());
+            customerData.add(tc);   
+        }
+        
+        
         //Checks if required fields are empty
         if(firstName.getText().equals("") || lastName.getText().equals("") || adr1.getText().equals("") || town.getText().equals("") || postCode.getText().equals("")) {
             popup("Error", "Please fill out all fields that are marked with *");
@@ -203,7 +215,8 @@ public class RunCustomer implements Initializable {
         c.readCustomer(blist);
         c.readParts(blist);
         c.readDate(blist);
-
+           
+  
 
         for(Booking b : blist) {
             System.out.println("Booking: "+b.getBookings());
@@ -214,37 +227,6 @@ public class RunCustomer implements Initializable {
             if(b.getCustomer().equals(id+""))
             data.add(b);
         }
-        /*if(v.size() < 1) popup(null, "The customer does not have any registered vehicles");
-        for(myVehicle mv : v) {
-            c.readParts(mv);
-            c.readBooking(mv);
-        }
-
-        Account a;
-        for(myVehicle mv : v) {
-           a = new Account();
-            a.setCustomer(mv.getCustomer()+"");
-            a.setVehicles(mv.getVehicle()+"");
-            System.out.println("Customer: " + mv.getCustomer());
-
-            String s = "";
-            String s2 = "";
-
-            for(Integer i : mv.getParts()) {
-                s2 += i+", ";
-            }
-            System.out.println("Parts: "+s2);
-            a.setParts(s2);
-
-            for(Integer i : mv.getBookings()) {
-                s += i+", ";
-            }
-            System.out.println("Booking: " +s);
-            a.setBookings(s);
-
-            data.add(a);
-        }*/
-
     }
 
     @Override
@@ -256,6 +238,11 @@ public class RunCustomer implements Initializable {
         //Creates a manager, and reads from the Customer table and stores it in customer objects.
         c = new CustomerManager();
         c.read();
+        
+        for(Customer cus : c.customers) {
+            TableCustomer tc = new TableCustomer(""+cus.getId(), ""+cus.getFirst(),""+cus.getLast());
+            customerData.add(tc);   
+        }
         
         //Check if needed to call customer
             ArrayList<Integer> customersToCall = c.alert();
@@ -270,12 +257,16 @@ public class RunCustomer implements Initializable {
                 Logger.getLogger(RunCustomer.class.getName()).log(Level.SEVERE, null, ex);
             }
             }
+        IDCOL.setCellValueFactory(new PropertyValueFactory<TableCustomer, String>("ID"));
+        firstNameCol.setCellValueFactory(new PropertyValueFactory<TableCustomer, String>("firstName"));
+        lastNameCol.setCellValueFactory(new PropertyValueFactory<TableCustomer, String>("lastName"));
         date.setCellValueFactory(new PropertyValueFactory<Booking, String>("date"));
         customer.setCellValueFactory(new PropertyValueFactory<Booking, String>("customer"));
         booking.setCellValueFactory(new PropertyValueFactory<Booking, String>("bookings"));
         vehicle.setCellValueFactory(new PropertyValueFactory<Booking, String>("vehicles"));
         parts.setCellValueFactory(new PropertyValueFactory<Booking, String>("parts"));
         tableView.setItems(data);
+        customerTable.setItems(customerData);
         
     }
     
