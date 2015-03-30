@@ -58,7 +58,7 @@ public class VehicleRecordsMainController implements Initializable {
     @FXML private TableView<?> vehicleTable;
     @FXML private TableView partsTable;
     @FXML private TableView bookingsTable;
-    @FXML private TableView<?> sbookingsTable;
+    @FXML private TableView sbookingsTable;
     @FXML private Tab tabVehicle;
     @FXML private Tab tabCustomer;
     @FXML private Tab tabWarranty;
@@ -418,6 +418,8 @@ public class VehicleRecordsMainController implements Initializable {
         }
         
         //Load bookings
+        cmbBookings.setDisable(false);
+        
         String bookingQuery = "SELECT a.\"Booking ID\", \"Date of Booking\", \"Start Time\", \"End Time\", \"Booking Cost\", \"Payment Status\" "
                 + "FROM Bookings a, Account b WHERE a.'Vehicle ID'=" + currentVehicle.getVehID() + " AND b.'Booking ID'=a.'Booking ID';";
         
@@ -476,9 +478,67 @@ public class VehicleRecordsMainController implements Initializable {
             tabBookings.setDisable(true);
         }
         
-        String sbookingQuery = "SELECT \"SBooking ID\" AS 'Booking ID', date AS 'Date of Booking', time AS 'Start Time', type AS Type, failure AS Passed "
-                + "FROM Sbooking WHERE 'Vehicle ID'=" + currentVehicle.getVehID() + ";";
+        String sbookingQuery = "SELECT \"SBooking ID\" AS 'Booking ID', date AS 'Date of Booking', time AS 'Start Time', type AS Type, failure AS Failure "
+                + "FROM Sbooking WHERE \"Vehicle ID\"=" + currentVehicle.getVehID() + ";";
         
+        ResultSet sbookingrs = db.queryDB(sbookingQuery);
+
+        if(sbookingrs.next()) {
+            sbookingrs = db.queryDB(sbookingQuery);
+            
+            for(int i = 0; i < sbookingrs.getMetaData().getColumnCount(); i++) {
+                final int j = i;
+                
+                TableColumn col = new TableColumn(sbookingrs.getMetaData().getColumnName(i + 1));
+                
+                col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList,String>,ObservableValue<String>>(){                   
+                    @Override
+                    public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {                                                                                             
+                        return new SimpleStringProperty(param.getValue().get(j).toString());                       
+                    }                   
+                });
+
+                sbookingsTable.getColumns().addAll(col);
+            }
+            
+            ObservableList<ObservableList> data = FXCollections.observableArrayList();
+            
+            //Add data to observable list
+            while(sbookingrs.next()) {
+                //Iterate rows
+                ObservableList<String> row = FXCollections.observableArrayList();
+                
+                for(int i = 1; i <= sbookingrs.getMetaData().getColumnCount(); i++) {
+                    if(i == 2) {
+                        row.add(DateUtils.date2str(sbookingrs.getDate(i)));
+                    } else if(i == 3) {
+                        row.add(sbookingrs.getTime(i).toString());
+                    } else {
+                        row.add(sbookingrs.getString(i).trim()); 
+                    }      
+                }
+                
+                data.add(row);
+            }
+            
+            sbookingsTable.setItems(data);
+            
+            if(!bookingShowing) {
+                tabBookings.setDisable(false);
+                cmbBookings.getSelectionModel().select(1);
+                sbookingsTable.setVisible(true);
+                bookingsTable.setVisible(false);
+                cmbBookings.setDisable(true);
+            }
+        
+        } else if(bookingShowing) {
+            cmbBookings.getSelectionModel().select(0);
+            cmbBookings.setDisable(true);
+            sbookingsTable.setVisible(false);
+            bookingsTable.setVisible(true);
+        } else {
+            tabBookings.setDisable(true);
+        }
     }
     
 }
