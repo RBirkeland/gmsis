@@ -340,8 +340,8 @@ public class VehicleRecordsMainController implements Initializable {
         }
         
         //Load parts
-        String partsQuery = "SELECT b.'Name', b.'Description' c.'Date of Booking' AS 'Date Installed', a.'Warranty Expirate Date' FROM 'Vehicle Parts' a, 'Parts' b, 'Bookings' c WHERE a.'Vehicle ID'="
-                + lblVehID.getText() +" AND a.'Part ID'=b.'Part ID' AND a.'Booking ID'=c.'BookingID';";
+        String partsQuery = "SELECT 'Name', 'Description', 'Date of Booking' AS 'Date Installed', 'Warranty Expirate Date' FROM 'Vehicle Parts' a, 'Parts' b, 'Bookings' c WHERE a.'Vehicle ID'="
+                + lblVehID.getText() +" AND a.'Part ID'=b.'Part ID' AND a.'Booking ID'=c.'Booking ID';";
         
         ResultSet partsrs = db.queryDB(partsQuery);
         
