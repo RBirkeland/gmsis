@@ -57,7 +57,7 @@ public class VehicleRecordsMainController implements Initializable {
     @FXML private Button btnSearch;
     @FXML private TableView<?> vehicleTable;
     @FXML private TableView partsTable;
-    @FXML private TableView<?> bookingsTable;
+    @FXML private TableView bookingsTable;
     @FXML private TableView<?> sbookingsTable;
     @FXML private Tab tabVehicle;
     @FXML private Tab tabCustomer;
@@ -93,7 +93,7 @@ public class VehicleRecordsMainController implements Initializable {
     @FXML private Label lblCustTown;
     @FXML private Label lblCustPostcode;
     @FXML private Label lblCustPhoneNum;
-    @FXML private ChoiceBox cmbBookings;
+    @FXML private ChoiceBox<String> cmbBookings;
     
     private Vehicle currentVehicle;
     private VehicleRecords vehicleRecords;
@@ -232,6 +232,21 @@ public class VehicleRecordsMainController implements Initializable {
         // Clear details
         setPanel();
         
+        //Load table combo
+        ObservableList<String> tableOptions = 
+            FXCollections.observableArrayList(
+                "Diagnosis and Repair",
+                "Scheduled Maintenance"
+            );
+        cmbBookings.setItems(tableOptions);
+        
+        cmbBookings.getSelectionModel().select(0);
+        
+        cmbBookings.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    updateBookingsTab(newValue);
+         });
+        
         //Load search combo box
         ObservableList<String> options = 
             FXCollections.observableArrayList(
@@ -252,6 +267,16 @@ public class VehicleRecordsMainController implements Initializable {
                 vehicleTable.getSelectionModel().clearSelection();
             }
         });     
+    }
+    
+    private void updateBookingsTab(String table) {
+        if(table.equals("Diagnosis and Repair")) {
+            bookingsTable.setVisible(true);
+            sbookingsTable.setVisible(false);
+        } else if(table.equals("Scheduled Maintenance")) {
+            bookingsTable.setVisible(false);
+            sbookingsTable.setVisible(true);
+        }
     }
     
     private void updatePanel(ObservableList<String> list) throws SQLException, Exception {
@@ -340,13 +365,15 @@ public class VehicleRecordsMainController implements Initializable {
         }
         
         //Load parts
-        String partsQuery = "SELECT 'Name', 'Description', 'Date of Booking' AS 'Date Installed', 'Warranty Expirate Date' FROM 'Vehicle Parts' a, 'Parts' b, 'Bookings' c WHERE a.'Vehicle ID'="
+        String partsQuery = "SELECT Name, Description, \"Date of Booking\" AS 'Date Installed', \"Warranty Expiration Date\" FROM 'Vehicle Parts' a, 'Parts' b, 'Bookings' c WHERE a.'Vehicle ID'="
                 + lblVehID.getText() +" AND a.'Part ID'=b.'Part ID' AND a.'Booking ID'=c.'Booking ID';";
         
         ResultSet partsrs = db.queryDB(partsQuery);
         
         if(partsrs.next()) {
             tabParts.setDisable(false);
+            
+            partsrs = db.queryDB(partsQuery);
             
             for(int i = 0; i < partsrs.getMetaData().getColumnCount(); i++) {
                 final int j = i;
@@ -374,7 +401,7 @@ public class VehicleRecordsMainController implements Initializable {
                     if(i == 4) {
                         Long date = partsrs.getLong(i);
                         date = DateUtils.sec2milli(date);
-                        Date d = DateUtils.str2date(date.toString());
+                        Date d = new Date(date);
                         row.add(DateUtils.date2str(d));
                     } else {
                         row.add(partsrs.getString(i).trim());
@@ -389,7 +416,68 @@ public class VehicleRecordsMainController implements Initializable {
         } else {
             tabParts.setDisable(true);
         }
+        
         //Load bookings
+        String bookingQuery = "SELECT a.\"Booking ID\", \"Date of Booking\", \"Start Time\", \"End Time\", \"Booking Cost\", \"Payment Status\" "
+                + "FROM Bookings a, Account b WHERE a.'Vehicle ID'=" + currentVehicle.getVehID() + " AND b.'Booking ID'=a.'Booking ID';";
+        
+        ResultSet bookingrs = db.queryDB(bookingQuery);
+        
+        boolean bookingShowing;
+        
+        if(bookingrs.next()){
+            bookingrs = db.queryDB(bookingQuery);
+            
+            for(int i = 0; i < bookingrs.getMetaData().getColumnCount(); i++) {
+                final int j = i;
+                
+                TableColumn col = new TableColumn(bookingrs.getMetaData().getColumnName(i + 1));
+                
+                col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList,String>,ObservableValue<String>>(){                   
+                    @Override
+                    public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {                                                                                             
+                        return new SimpleStringProperty(param.getValue().get(j).toString());                       
+                    }                   
+                });
+
+                bookingsTable.getColumns().addAll(col);
+            }
+            
+            ObservableList<ObservableList> data = FXCollections.observableArrayList();
+            
+            //Add data to observable list
+            while(bookingrs.next()) {
+                //Iterate rows
+                ObservableList<String> row = FXCollections.observableArrayList();
+                
+                for(int i = 1; i <= bookingrs.getMetaData().getColumnCount(); i++) {
+                    if(i == 5) {
+                        row.add("£" + bookingrs.getString(i));
+                    } else if(i == 6) {
+                        if(bookingrs.getBoolean(i)) {
+                            row.add("Paid");
+                        } else {
+                            row.add("Unpaid");
+                        }
+                    } else {
+                        row.add(bookingrs.getString(i).trim());
+                    }  
+                }
+                
+                data.add(row);
+            }
+            
+            //Add data to table
+            bookingsTable.setItems(data);
+            bookingShowing = true;
+            tabBookings.setDisable(false);
+        } else {
+            bookingShowing = false;
+            tabBookings.setDisable(true);
+        }
+        
+        String sbookingQuery = "SELECT \"SBooking ID\" AS 'Booking ID', date AS 'Date of Booking', time AS 'Start Time', type AS Type, failure AS Passed "
+                + "FROM Sbooking WHERE 'Vehicle ID'=" + currentVehicle.getVehID() + ";";
         
     }
     
