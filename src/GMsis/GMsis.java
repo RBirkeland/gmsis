@@ -35,6 +35,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -71,10 +72,26 @@ public class GMsis extends Application {
         }
         
         initRootLayout();
-        
+        showlogin();
         showBookings();
         
         //custRecords.setOnAction(event -> showCustomerRecords());
+    }
+    
+    public void showlogin() {
+        try {
+             FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(GMsis.class.getResource("login.fxml"));
+            Pane rootLayout = (Pane) loader.load();
+
+            // Show the scene containing the root layout.
+            Scene scene = new Scene(rootLayout);
+            primaryStage.setScene(scene);
+            primaryStage.show();
+            
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
     
     public void showBookings() {

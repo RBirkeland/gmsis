@@ -5,17 +5,18 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GMsis.Login">
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Text layoutX="154.0" layoutY="51.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome to Garage System">
          <font>
             <Font size="24.0" />
          </font>
       </Text>
-      <TextField fx:id="username" layoutX="266.0" layoutY="89.0" />
+      <TextField layoutX="266.0" layoutY="89.0" />
+      <TextField layoutX="266.0" layoutY="129.0" />
       <Text layoutX="179.0" layoutY="106.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username" />
       <Text layoutX="181.0" layoutY="146.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password" />
-      <Button fx:id="login" layoutX="274.0" layoutY="200.0" mnemonicParsing="false" text="Login" />
-      <PasswordField fx:id="password" layoutX="266.0" layoutY="129.0" />
+      <Button layoutX="274.0" layoutY="200.0" mnemonicParsing="false" text="Login" />
    </children>
 </Pane>
