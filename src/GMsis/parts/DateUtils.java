@@ -5,11 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by filipt on 26/03/15.
- * Java just can't give you simple
- * global variables smh
- */
 public class DateUtils {
     public static final String FMT = "dd/MM/yyyy";
 

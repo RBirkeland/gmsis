@@ -99,7 +99,7 @@ public class SupplierManager {
 
     public void orderPart(int id, int partID, Date date, int quantity) {
         String sql = String.format("INSERT INTO \"Parts On Order\" VALUES(%d, %d, %d, %d);",
-                                    id, partID, DateUtils.milli2sec(date.getTime()), quantity);
+                                    partID, DateUtils.milli2sec(date.getTime()),id, quantity);
         db.updateDB(sql);
         partsOnOrder.add(new PartOrder(id));
 
@@ -107,7 +107,7 @@ public class SupplierManager {
 
     public PartOrder getOrder(Integer id) {
         for (PartOrder po : partsOnOrder) {
-            if (po.getPartID().equals(id))
+            if (po.getID().equals(id))
                 return po;
         }
 

@@ -37,7 +37,7 @@ public class PartOrder {
         this.ID.set(ID);
 
         orderRecord = new DatabaseRecord(ID, "Parts on Order", "Order ID");
-        ResultSet rs = DBConn.getInstance().queryDB("SELECT * FROM \"Parts on Order\" WHERE \"Order ID\"=" + ID + ";");
+        ResultSet rs = DBConn.getInstance().queryDB(String.format("SELECT * FROM \"Parts on Order\" WHERE \"Order ID\"=%d;", ID));
 
         try {
             this.partID.set(rs.getInt(PART_ID_COL));

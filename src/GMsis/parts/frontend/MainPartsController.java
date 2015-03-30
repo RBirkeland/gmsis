@@ -224,7 +224,12 @@ public class MainPartsController implements Initializable{
         orderEditBtn.setOnAction((event) -> {
              PartOrder toEdit = partsOnOrder.getSelectionModel().getSelectedItem();
 
+             if (toEdit == null) {
+                 System.out.println("It's null aaarhghghg it burnzz");
+             }
+             
             try {
+                //System.out.println("fail");
                 subControllers.get("orders").show(toEdit.getID());
             } catch (NullPointerException e) {
                 alertNotSelected();
