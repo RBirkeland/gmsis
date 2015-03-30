@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="339.0" prefWidth="338.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GMsis.VehicleRecords.GUI.WarrantyController">
+   <children>
+      <StackPane fx:id="paneTable" prefHeight="339.0" prefWidth="338.0">
+         <children>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <TableView fx:id="tblWarranty" prefHeight="291.0" prefWidth="328.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+                  <HBox layoutX="27.0" layoutY="305.0" spacing="5.0">
+                     <children>
+                        <Button fx:id="btnEdit" layoutX="27.0" layoutY="305.0" mnemonicParsing="false" onAction="#editWarranty" prefWidth="72.0" text="Edit" />
+                        <Button fx:id="btnNew" layoutX="104.0" layoutY="305.0" mnemonicParsing="false" onAction="#newWarranty" prefWidth="72.0" text="New" />
+                        <Button fx:id="btnDelete" layoutX="181.0" layoutY="305.0" mnemonicParsing="false" onAction="#deleteWarranty" prefWidth="72.0" text="Delete" />
+                        <Button id="btncancel" fx:id="btnCancel" layoutX="257.0" layoutY="305.0" mnemonicParsing="false" onAction="#handleCancel" prefHeight="25.0" prefWidth="71.0" text="Cancel" />
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+         </children>
+      </StackPane>
+      <Pane fx:id="paneDetails" prefHeight="339.0" prefWidth="338.0" visible="false">
+         <children>
+            <GridPane layoutX="5.0" prefHeight="275.0" prefWidth="328.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="159.0" minWidth="10.0" prefWidth="144.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="217.0" minWidth="10.0" prefWidth="184.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label id="lblservice" text="Phone Number:" GridPane.rowIndex="5" />
+                  <Label id="lblcolour" text="Post Code:" GridPane.rowIndex="4" />
+                  <Label id="lblengine" text="Town/City:" GridPane.rowIndex="3" />
+                  <Label id="lblfuel" text="2nd Line Address:" GridPane.rowIndex="2" />
+                  <Label id="lblmodel" text="1st Line Address:" GridPane.rowIndex="1" />
+                  <Label id="lblmake" text="Company Name:" />
+                  <TextField id="txtmake" fx:id="txtCompany" prefHeight="16.0" prefWidth="149.0" GridPane.columnIndex="1" />
+                  <TextField id="txtmodel" fx:id="txtAddress1" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextField id="txtengine" fx:id="txtTown" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <TextField id="txtmodel" fx:id="txtAddress2" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <TextField id="txtmodel" fx:id="txtPostCode" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <TextField id="txtmodel" fx:id="txtPhone" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+               </children>
+            </GridPane>
+            <HBox layoutX="181.0" layoutY="305.0" spacing="5.0">
+               <children>
+                  <Button id="btnsave" fx:id="btnSave" layoutX="181.0" layoutY="305.0" mnemonicParsing="false" onAction="#handleSave" prefHeight="25.0" prefWidth="72.0" text="Save" />
+                  <Button id="btncancel" fx:id="btnCancel1" layoutX="258.0" layoutY="305.0" mnemonicParsing="false" onAction="#handleCancel" prefHeight="25.0" prefWidth="71.0" text="Cancel" />
+               </children>
+            </HBox>
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>
