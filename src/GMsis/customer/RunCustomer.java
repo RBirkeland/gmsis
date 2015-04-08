@@ -281,7 +281,6 @@ public class RunCustomer implements Initializable {
             else {
                 table(c.findCustomerName(first, last).getId());
             }
-
         }
     }
 
